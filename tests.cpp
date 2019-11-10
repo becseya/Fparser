@@ -46,7 +46,7 @@ struct A {
     }
 };
 
-struct  B : public A {
+struct  B : virtual public A {
     virtual ~B() {}
     int number_b;
     int val() override {
@@ -136,7 +136,7 @@ TEST(VectorTest, Dynamic) {
 
 
 
-struct NA : public NamedClass, public A {
+struct NA : public NamedClass, virtual public A {
     NA(const char* name): NamedClass(name) {} 
 private:
     NA(const NA&);
@@ -145,11 +145,38 @@ private:
 
 struct NB : public NA, public B {
     NB(const char* name): NA(name) {}
-    int val() override{return B::val();}
 private:
     NB(const NB&);
     NB& operator=(const NB&);
 };
+
+TEST(VectorTest, Diamond) {
+    NB* nbptr = new NB("B");
+    NA* naptr = new NA("A");
+    NA* naptr1 = nbptr;
+    B* bptr = nbptr;
+    A* aptr = naptr;
+    A* aptr1 = nbptr;
+    A* aptr2 = bptr;
+
+    ASSERT_STREQ(nbptr->getName(), "B");
+    ASSERT_EQ(nbptr->val(), 2);
+    ASSERT_STREQ(naptr->getName(), "A");
+    ASSERT_EQ(naptr->val(), 1);
+
+    ASSERT_STREQ(naptr1->getName(), "B");
+    ASSERT_EQ(naptr1->val(), 2);
+
+    ASSERT_EQ(aptr->val(), 1);
+    ASSERT_EQ(bptr->val(), 2);
+    ASSERT_EQ(aptr1->val(), 2);
+    ASSERT_EQ(aptr2->val(), 2);
+
+    delete naptr;
+    delete nbptr;
+}
+
+
 
 
 void print_name(NamedPVectorBase& v) {

@@ -8,7 +8,7 @@
             "name": "Debug",
             "type": "gdb",
             "request": "launch",
-            "target": "bin/test",
+            "target": "bin/tests",
             "cwd": "${workspaceRoot}",
             "valuesFormatting": "parseText"
         }
