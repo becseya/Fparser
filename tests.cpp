@@ -172,6 +172,18 @@ TEST(VectorTest, Diamond) {
     ASSERT_EQ(aptr1->val(), 2);
     ASSERT_EQ(aptr2->val(), 2);
 
+    PVector<NA> nav;
+    nav.add(naptr);
+    void* target = nav.get(0);
+    PVector<A> vectora(nav);
+    void* actual = vectora.get(0);
+    //ASSERT_NE(target, actual);
+
+    A* aptr11 = (NA*)actual;
+    A* aptr22 = (A*)actual;
+    //st = aptr22->val();
+    //ASSERT_EQ(1, st);
+
     delete naptr;
     delete nbptr;
 }
@@ -244,7 +256,7 @@ TEST(VectorTest, Named) {
     //print_name(nav);
     nbv.clear();
     nav.clear();
-} 
+}
 
 
 int main(int argc, char *argv[]) {

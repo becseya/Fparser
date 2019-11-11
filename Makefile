@@ -43,7 +43,7 @@ clean:
 	$(RM) -r $(BUILD_DIR)
 	$(RM) -r $(BIN_DIR)
 
-test:
+run:
 	./bin/tests
 
 print-% : ; @echo $* = $($*)

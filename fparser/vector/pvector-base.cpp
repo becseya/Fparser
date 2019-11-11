@@ -4,9 +4,19 @@
 
 
 PVectorBase::PVectorBase() : 
-    array((void**)malloc(DEFAULT_SIZE * sizeof(void*))),
-    array_size(DEFAULT_SIZE),
-    N(0)
+    array(this_array),
+    array_size(this_array_size),
+    N(this_N)
+{
+    array = (void**)malloc(DEFAULT_SIZE * sizeof(void*));
+    array_size = DEFAULT_SIZE;
+    N = 0;
+}
+
+PVectorBase::PVectorBase(const PVectorBase& other) :
+    array(other.array),
+    array_size(other.array_size),
+    N(other.N)
 {}
 
 PVectorBase::~PVectorBase(){

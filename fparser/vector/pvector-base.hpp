@@ -2,13 +2,16 @@
 
 class PVectorBase {
     static const int DEFAULT_SIZE = 1;
-    void** array;
-    int array_size;
-    int N;
+    void**& array;
+    int& array_size;
+    int& N;
 
-
+    void** this_array;
+    int this_array_size;
+    int this_N;
 public:
     PVectorBase();
+    PVectorBase(const PVectorBase&);
     virtual ~PVectorBase();
 
     int getSize();
@@ -23,6 +26,5 @@ protected:
     virtual void delete_(void* ptr);
 
 private:
-    PVectorBase(const PVectorBase&);
     PVectorBase& operator=(const PVectorBase&);
 };
