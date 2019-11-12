@@ -2,7 +2,7 @@
 #include "fparser/vector/pvector.hpp"
 #include "fparser/vector/named-vector.hpp"
 #include "fparser/fields.hpp"
-#include "fparser/node.hpp"
+#include "fparser/node-list.hpp"
 #include "fparser/arg.hpp"
 #include <gtest/gtest.h>
 
@@ -212,7 +212,7 @@ NamedPVector<NB> nbv;
 NamedPVector<NA> nav;
 
 TEST(VectorTest, Named) {
-    srand (time(NULL));
+    srand (0); // same names every run
     NA* naptr;
     NB* nbptr;
     int size_before;
@@ -312,10 +312,12 @@ TEST(Fparser, Fields) {
 }
 
 ParseArg arg;
+GetArgs get_arg;
 FieldNode root;
 FieldNode subnode("sub");
 
 TEST(Fparser, Node) {
+    get_arg.dense = true;
     arg.dense = true;
     arg.import = true;
 
@@ -325,23 +327,55 @@ TEST(Fparser, Node) {
     root.add(&ff1);
     root.add(&strf);
     
-    root.get(buff, &arg);
-    printf("%s\n", buff);
+    root.get(buff, &get_arg);
+    //printf("%s\n", buff);
     ASSERT_STREQ("{\"sub\": {\"a1\": true, \"a2\": -33}, \"a1\": 1000.1, \"a2\": \"new\"}", buff);
 
     root.set("a5  :  -33    ,   a2:  \"old\"  ,  sub  :   {  dummy1:  \"asd\",,   , a2:-5,dummy2:{a2:0}},a2:0,  a1:    0.1", &arg);
-    root.get(buff, &arg); 
-    printf("%s\n", buff);
+    root.get(buff, &get_arg); 
+    //printf("%s\n", buff);
     ASSERT_EQ(-5, int3);
     ASSERT_EQ(0.1f, float1);
     ASSERT_STREQ("old", string_);
 }
 
+struct DynamicIntField : public IntField {
+    int myVal;
+    DynamicIntField(const char* name, int def = 0) : IntField(name, myVal), myVal(def) {}
+    operator int&() {return myVal;}
+};
 
+NamedPVector<DynamicIntField> myInts;
+FieldList listf1("ints", myInts);
 
+TEST(Fparser, List) {
+    myInts.add(new DynamicIntField("name", 5));
+    myInts.createAndAdd();
+    ASSERT_EQ(5, (int)*myInts.get(0));
+    ASSERT_EQ(0, (int)*myInts.get(1));
+    ASSERT_STREQ("name", myInts.getName(0));
+    ASSERT_EQ(5, (int)*myInts.getByName("name"));
+    ASSERT_EQ(1, myInts.getNByName(myInts.getName(1)));
 
-FieldNode root2;
+    root.add(&listf1);
+    listf1.get(buff, &get_arg);
+    ASSERT_STREQ("[5, 0]", buff);
+    (int&)*myInts.get(0) = -33;
+    (int&)*myInts.get(1) = 33;
+    listf1.get(buff, &get_arg);
+    ASSERT_STREQ("[-33, 33]", buff);
 
+    listf1.set("[44,, \"asd\" ,  -4  ]");
+    ASSERT_EQ(2, myInts.getSize());
+    ASSERT_EQ(44, (int)*myInts.get(0));
+    ASSERT_EQ(-4, (int)*myInts.get(1));
+    listf1.get(buff, &get_arg);
+    ASSERT_STREQ("[44, -4]", buff);
+    //printf("%s\n", buff);
+
+    root.get(buff);
+    printf("%s\n", buff);
+}
 
 
 

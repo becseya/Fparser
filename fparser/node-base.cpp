@@ -13,6 +13,13 @@ NodeBase::NodeBase(const char* name, int flags, bool* set_flag) :
     set_flag(set_flag)
 {}
 
+NodeBase::NodeBase(const char* name, int flags, field_type_t type) :
+    NamedClass(name),
+    type(type),
+    flags(flags),
+    set_flag(nullptr)
+{}
+
 NodeBase::~NodeBase() {}
 
 int NodeBase::getFlags() {

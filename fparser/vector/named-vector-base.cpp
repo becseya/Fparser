@@ -24,7 +24,9 @@ NamedClass* NamedPVectorBase::createAndAdd(void* arg) {
 }*/
 
 const char* NamedPVectorBase::getName(int n) {
-    return get(n)->getName();
+    NamedClass* ptr = get(n);
+    if(ptr) {return ptr->getName();}
+    else {return "";}
 }
 
 int NamedPVectorBase::getNByName(const char* name) {

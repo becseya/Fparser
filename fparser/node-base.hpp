@@ -24,7 +24,11 @@ private:
 public:
     NodeBase(const char* name, int flags = 0, bool* set_flag = nullptr);
     virtual ~NodeBase();
+protected:
+    NodeBase(const char* name, int flags, field_type_t type);
+    
 
+public:
     int getFlags();
     bool isExportable();
     bool isVisible();

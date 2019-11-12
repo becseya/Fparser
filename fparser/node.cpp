@@ -3,12 +3,14 @@
 
 
 FieldNode::FieldNode(const char* name, int flags) : 
-    NodeBase(name, flags),
+    NodeBase(name, flags, OBJECT),
     children(this_children)
 {}
 
-FieldNode::FieldNode(const char* name, NamedPVector<NodeBase>& children, int flags) : 
-    NodeBase(name, flags),
+FieldNode::~FieldNode() {}
+
+FieldNode::FieldNode(const char* name, NamedPVector<NodeBase>& children, int flags, field_type_t type) : 
+    NodeBase(name, flags, type),
     children(children)
 {}
 
@@ -18,13 +20,17 @@ void FieldNode::add(NodeBase* child) {
 
 int FieldNode::get_override(char* out, void* arg_) {
     int st;
+    int print_dept;
     GetArgs arg_def;
     GetArgs* arg = arg_ ? (GetArgs*)arg_ : &arg_def;
-    
+
+
     // open bracket
     arg->depth++;
-    strcpy(out, "{");
-    printNewLine(out, (arg->dense ? -1 : arg->depth+1));
+    print_dept = ((arg->dense || (type == LIST)) ? -2 : arg->depth);
+    if(type == OBJECT) {strcpy(out, "{");}
+    else {strcpy(out, "[");}
+    printNewLine(out, print_dept+1);
 
     bool at_least_one = false;
     for(int i = 0; i < children.getSize(); i++) {
@@ -40,22 +46,25 @@ int FieldNode::get_override(char* out, void* arg_) {
 
         // print
         if(at_least_one) {
-            printNewLine(out, (arg->dense ? -1 : arg->depth+1), true);
+            printNewLine(out, print_dept+1, true);
         }
         at_least_one = true;
-        strcat(out, "\"");
-        strcat(out, child->getName());
-        strcat(out, "\": ");
+        if(type != LIST) {
+            strcat(out, "\"");
+            strcat(out, child->getName());
+            strcat(out, "\": ");
+        }
         st = child->get(out + strlen(out), arg);
-        if (st < 0) {return st;}
+        if (st < 0) {break;}
     }
 
     // close bracket
-    printNewLine(out, (arg->dense ? -1 : arg->depth));
-    strcat(out, "}");
+    printNewLine(out, print_dept);
+    if(type == OBJECT) {strcat(out, "}");}
+    else {strcat(out, "]");}
     arg->depth--;
 
-    return 0;
+    return st;
 }
 
 int FieldNode::set_override(const char* in, void* arg_) {
@@ -104,7 +113,8 @@ void FieldNode::skipData(const char*& str) {
         }
         str++;  
     }
-
+    
+    skipWhiteSpace(str);
     if(*str == ',') {str++;}
     skipWhiteSpace(str);
 }

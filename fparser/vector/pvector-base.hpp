@@ -19,6 +19,7 @@ public:
     void add(void* ptr);
     void* createAndAdd(void* arg = nullptr);
 	void remove(int n);
+    void removelast();
     void clear();
 
 protected:

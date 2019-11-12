@@ -55,6 +55,10 @@ void PVectorBase::remove(int n) {
     }
 }
 
+void PVectorBase::removelast(){
+    remove(N-1);
+}
+
 void PVectorBase::clear() {
     while(N>0) {
         remove(N-1);
