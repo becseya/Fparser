@@ -22,6 +22,7 @@ public:
     const char* getName(int n);
     int getNByName(const char* name);
     NamedClass* getByName(const char* name);
+    NamedClass* createAndAddNamed(const char* name, void* arg = nullptr);
 
 private:
     const char* generateName();

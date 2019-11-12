@@ -52,6 +52,12 @@ const char* NamedPVectorBase::generateName() {
     return name_buffer;
 }
 
+NamedClass* NamedPVectorBase::createAndAddNamed(const char* name, void* arg) {
+    NamedClass* ptr = new_named_(name, arg); 
+    if(ptr) {add(ptr);}
+    return ptr;
+}
+
 void* NamedPVectorBase::new_(void* arg_) {
     name_and_arg_t name_and_arg;
     name_and_arg.name = generateName();
