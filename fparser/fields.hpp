@@ -1,6 +1,6 @@
 #pragma once
 
-#include "base.hpp"
+#include "node-base.hpp"
 
 
 class BoolField : public NodeBase {
