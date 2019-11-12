@@ -311,6 +311,40 @@ TEST(Fparser, Fields) {
     ASSERT_STREQ("new", string_); 
 }
 
+ParseArg arg;
+FieldNode root;
+FieldNode subnode("sub");
+
+TEST(Fparser, Node) {
+    arg.dense = true;
+    arg.import = true;
+
+    subnode.add(&bf1);
+    subnode.add(&if1);
+    root.add(&subnode);
+    root.add(&ff1);
+    root.add(&strf);
+    
+    root.get(buff, &arg);
+    printf("%s\n", buff);
+    ASSERT_STREQ("{\"sub\": {\"a1\": true, \"a2\": -33}, \"a1\": 1000.1, \"a2\": \"new\"}", buff);
+
+    root.set("a5  :  -33    ,   a2:  \"old\"  ,  sub  :   {  dummy1:  \"asd\",,   , a2:-5,dummy2:{a2:0}},a2:0,  a1:    0.1", &arg);
+    root.get(buff, &arg); 
+    printf("%s\n", buff);
+    ASSERT_EQ(-5, int3);
+    ASSERT_EQ(0.1f, float1);
+    ASSERT_STREQ("old", string_);
+}
+
+
+
+
+FieldNode root2;
+
+
+
+
 int main(int argc, char *argv[]) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

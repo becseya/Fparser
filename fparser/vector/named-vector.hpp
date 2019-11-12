@@ -16,6 +16,10 @@ public:
         NamedPVectorBase::add(ptr);
     }
 
+    T* getByName(const char* name){
+        return (T*)NamedPVectorBase::getByName(name);
+    }
+
     T* createAndAdd(void* arg = nullptr) {
         return (T*)NamedPVectorBase::createAndAdd(arg);
     }
