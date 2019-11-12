@@ -35,18 +35,10 @@ public:
     
 private:
     void* new_(void* arg) final {
-        return new_static(arg);
-    }
-
-    void* new_static(void* arg) {
         return new T;
     }
 
     void delete_(void* ptr) final {
-        delete_static(ptr);
-    }
-
-    static void delete_static(void* ptr) {
         delete (T*)ptr;
     }
 };
