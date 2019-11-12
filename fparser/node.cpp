@@ -141,7 +141,7 @@ const char* FieldNode::findNextName(const char*& str) {
     skipWhiteSpace(str);
 
     while(*str) {
-        if((*str == '{') || (*str == '}') || (*str == '"')) {
+        if((*str == '{') || (*str == '}') || (*str == '[') || (*str == ']') || (*str == '"')) {
             skipWhiteSpace(str);
         }
         else if((*str == ':') || (*str == ',') || isWhitespace(str)) {

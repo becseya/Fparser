@@ -373,13 +373,42 @@ TEST(Fparser, List) {
     ASSERT_STREQ("[44, -4]", buff);
     //printf("%s\n", buff);
 
-    root.get(buff);
-    printf("%s\n", buff);
+    //root.get(buff);
+    //printf("%s\n", buff);
+}
+
+struct DynamicClassField : public FieldNode {
+    int myVal;
+    char myStr[64];
+    DynamicClassField(const char* name) : FieldNode(name) {
+        myVal = 3;
+        strcpy(myStr, "hello");
+        children.add(new IntField("szam", myVal));
+        children.add(new CharField("str", myStr));
+    }
+};
+
+NamedPVector<DynamicClassField> myClassList("tt");
+NamedFieldList listf2("tables", myClassList, true);
+
+TEST(Fparser, NamesList) {
+    root.add(&listf2);
+
+    listf2.set("alma:");
+    listf2.set(":{szam:-5,str:\"chicken\"}");
+    listf2.set(":");
+
 }
 
 
 
 int main(int argc, char *argv[]) {
+    int st;
     testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    st = RUN_ALL_TESTS();
+
+    root.get(buff);
+    printf("%s\n", buff);
+
+    return st;
 }
