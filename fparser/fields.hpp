@@ -3,49 +3,48 @@
 #include "base.hpp"
 
 
-class BoolField : public FieldBase {
+class BoolField : public NodeBase {
     bool& val;
 
 public:
-    BoolField(const char* name, bool& val, bool def, uint32_t flags = 0, bool& set_flag = *(bool*)nullptr);
+    BoolField(const char* name, bool& val, int flags = 0, bool* set_flag = nullptr);
 
-    int set_override(const char* str, ParseArg* arg) override;
-    int get_override(char* str, bool dense, int print_depth, uint32_t flags) override;
-    int parse_override(const char* in, char* out, ParseArg& arg) override;
+    int set_override(const char* str, void* arg) override;
+    int get_override(char* str, void* arg) override;
 };
 
 
 
-class IntField : public FieldBase {
+class IntField : public NodeBase {
     int& val;
 
 public:
-    IntField(const char* name, int& val, int def, uint32_t flags = 0, bool& set_flag = *(bool*)nullptr);
+    IntField(const char* name, int& val, int flags = 0, bool* set_flag = nullptr);
 
-    int set_override(const char* str, ParseArg* arg) override;
-    int get_override(char* str, bool dense, int print_depth, uint32_t flags) override;
+    int set_override(const char* str, void* arg) override;
+    int get_override(char* str, void* arg) override;
 };
 
 
 
-class FloatField : public FieldBase {
+class FloatField : public NodeBase {
     float& val;
 
 public:
-    FloatField(const char* name, float& val, float def, uint32_t flags = 0, bool& set_flag = *(bool*)nullptr);
+    FloatField(const char* name, float& val, int flags = 0, bool* set_flag = nullptr);
 
-    int set_override(const char* str, ParseArg* arg) override;
-    int get_override(char* str, bool dense, int print_depth, uint32_t flags) override;
+    int set_override(const char* str, void* arg) override;
+    int get_override(char* str, void* arg) override;
 };
 
 
 
-class CharField : public FieldBase {
+class CharField : public NodeBase {
     char* val;
 
 public:
-    CharField(const char* name, char* val, const char* def, uint32_t flags = 0, bool& set_flag = *(bool*)nullptr);
+    CharField(const char* name, char* val, int flags = 0, bool* set_flag = nullptr);
     
-    int set_override(const char* str, ParseArg* arg) override;
-    int get_override(char* str, bool dense, int print_depth, uint32_t flags) override;
+    int set_override(const char* str, void* arg) override;
+    int get_override(char* str, void* arg) override;
 };

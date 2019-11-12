@@ -1,6 +1,9 @@
 
 #include "fparser/vector/pvector.hpp"
 #include "fparser/vector/named-vector.hpp"
+#include "fparser/fields.hpp"
+#include "fparser/node.hpp"
+#include "fparser/arg.hpp"
 #include <gtest/gtest.h>
 
 int st;
@@ -172,7 +175,7 @@ TEST(VectorTest, Diamond) {
     ASSERT_EQ(aptr1->val(), 2);
     ASSERT_EQ(aptr2->val(), 2);
 
-    PVector<NA> nav;
+    /*PVector<NA> nav;
     nav.add(naptr);
     void* target = nav.get(0);
     PVector<A> vectora(nav);
@@ -182,7 +185,7 @@ TEST(VectorTest, Diamond) {
     A* aptr11 = (NA*)actual;
     A* aptr22 = (A*)actual;
     //st = aptr22->val();
-    //ASSERT_EQ(1, st);
+    //ASSERT_EQ(1, st);*/
 
     delete naptr;
     delete nbptr;
@@ -258,6 +261,55 @@ TEST(VectorTest, Named) {
     nav.clear();
 }
 
+char buff[32*1024];
+
+bool bool1 = false;
+char string_[32] = "default";
+int int3 = 0;
+float float1 = -3.5f;
+bool changed = false;
+
+BoolField bf1("a1", bool1, BoolField::FLAG_READ_ONLY);
+IntField if1("a2", int3, 0, &changed);
+FloatField ff1("a1", float1);
+CharField strf("a2", string_);
+
+TEST(Fparser, Fields) {
+
+    st = bf1.get(buff);
+    ASSERT_STREQ("false", buff);
+    bool1 = true;
+    st = bf1.get(buff);
+    ASSERT_STREQ("true", buff);   
+    st = bf1.set("false");
+    ASSERT_EQ(-1, st);
+    ASSERT_EQ(false, changed);
+    BoolField bf2("im_bool2", bool1);
+    bf2.set("false");
+    ASSERT_EQ(false, bool1);
+    bf2.set("invert");
+    ASSERT_EQ(true, bool1);
+
+    st = if1.get(buff);
+    ASSERT_STREQ("0", buff);
+    int3 = 5;
+    st = if1.get(buff);
+    ASSERT_STREQ("5", buff); 
+    ASSERT_EQ(false, changed);
+    if1.set("-33");
+    ASSERT_EQ(-33, int3);
+    ASSERT_EQ(true, changed);
+
+    ff1.get(buff);
+    ASSERT_STREQ("-3.5", buff);
+    ff1.set("1000.1");
+    ASSERT_EQ(1000.1f, float1);
+
+    strf.get(buff);
+    ASSERT_STREQ("\"default\"", buff); 
+    strf.set("\"new\"");
+    ASSERT_STREQ("new", string_); 
+}
 
 int main(int argc, char *argv[]) {
     testing::InitGoogleTest(&argc, argv);
