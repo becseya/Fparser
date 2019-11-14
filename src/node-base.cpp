@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#define compx(x,y) (strncmp(x,y,strlen(y))==0)
 
 NodeBase::NodeBase(const char* name, int flags, bool* set_flag) : 
     NamedClass(name),
@@ -52,7 +53,16 @@ int NodeBase::get(char* out, void* arg) {
 }
 
 int NodeBase::parse(const char* in, char* out, void* arg) {
-    return -1;
+    if(*in == '\0' || (strcmp(in, "get") == 0)) {
+        return get(out, arg);
+    }
+    else if(compx(in, ":")) {
+        return set(in+1, arg);
+    }   
+    else if(compx(in, "set:")) {
+        return set(in+4, arg);
+    }
+    return parse_override(in, out, arg);
 }
 
 int NodeBase::get_override(char* out, void* arg){
@@ -60,5 +70,9 @@ int NodeBase::get_override(char* out, void* arg){
 }
 
 int NodeBase::set_override(const char* in, void* arg){
+    return -1;
+}
+
+int NodeBase::parse_override(const char* in, char* out, void* arg){
     return -1;
 }

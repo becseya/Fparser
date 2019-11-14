@@ -5,10 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug",
+            "name": "Attach gdb",
             "type": "gdb",
-            "request": "launch",
-            "target": "bin/tests",
+            "request": "attach",
+            "executable": "bin/tests",
+            "target": "localhost:2000",
+            "remote": true,
             "cwd": "${workspaceRoot}",
             "valuesFormatting": "parseText"
         }

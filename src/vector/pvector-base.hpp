@@ -18,7 +18,7 @@ public:
     void* get(int n);
     void add(void* ptr);
     void* createAndAdd(void* arg = nullptr);
-	void remove(int n);
+	void remove(int n); //TODO: return int-> parse throw error
     void removelast();
     void clear();
 

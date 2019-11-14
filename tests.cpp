@@ -414,8 +414,10 @@ int main(int argc, char *argv[]) {
     testing::InitGoogleTest(&argc, argv);
     st = RUN_ALL_TESTS();
 
-    root.get(buff);
-    //printf("%s\n", buff);
+    for (std::string line; std::getline(std::cin, line);) {
+        root.parse(line.c_str(), buff);
+        printf("%s\n", buff);
+    }
 
     return st;
 }

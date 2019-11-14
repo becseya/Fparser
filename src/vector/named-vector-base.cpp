@@ -30,6 +30,7 @@ const char* NamedPVectorBase::getName(int n) {
 }
 
 int NamedPVectorBase::getNByName(const char* name) {
+    if(!name || (*name == '\0')) {return -1;}
     for(int i = 0; i < getSize(); i++) {
         if(strcmp(name, getName(i)) == 0){
             return i;
@@ -42,6 +43,11 @@ NamedClass* NamedPVectorBase::getByName(const char* name) {
     int i = getNByName(name);
     if(i < 0) {return nullptr;}
     else {return get(i);}
+}
+
+void NamedPVectorBase::removeByName(const char* name){
+    int i = getNByName(name);
+    if(i >= 0) {remove(i);}
 }
 
 const char* NamedPVectorBase::generateName() {

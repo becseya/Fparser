@@ -20,6 +20,7 @@ public:
     void add(NamedClass* ptr);
     NamedClass* createAndAdd(void* arg = nullptr);*/
     const char* getName(int n);
+    void removeByName(const char* name);
     int getNByName(const char* name);
     NamedClass* getByName(const char* name);
     NamedClass* createAndAddNamed(const char* name, void* arg = nullptr);

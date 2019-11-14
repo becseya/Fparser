@@ -17,7 +17,6 @@ public:
     static const int ERR_MSG_SIZE = 128;
     static const int ERR_STACK_SIZE = 1024;
     
-    int depth = -1;
     bool err;
     bool set_ok;
     bool dense;

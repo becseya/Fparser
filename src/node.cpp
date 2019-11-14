@@ -18,6 +18,62 @@ void FieldNode::add(NodeBase* child) {
     children.add(child);
 }
 
+int FieldNode::parse_override(const char* in, char* out, void* arg_) {
+    int st;
+    const char* name;
+    ParseArg arg_def;
+    ParseArg* arg = arg_ ? (ParseArg*)arg_ : &arg_def;
+
+    // root
+    if(arg->depth == -1) {
+        strcpy(out, "");
+        if(*in == '!') {in++; arg->dense=true;}
+        else {arg->dense = false;}
+    }
+    
+    // step in
+    arg->stepIn();
+
+    name = findNextName(in);
+    NodeBase* child = children.getByName(name);
+
+    if(child) {
+        if(*in == '.') {in++;}
+        child->parse(in, out, arg);
+    }
+    else if (name) {
+        if(strcmp(name, "list") == 0) {
+            strcat(out, "{\"children\": [ ");
+            for(int i = 0; i < children.getSize(); i++) {
+                if(i > 0) {strcat(out, ", ");}
+                strcat(out, "\"");
+                strcat(out, children.get(i)->getName());
+                strcat(out, "\"");
+            }
+            strcat(out, " ]}");            
+        }
+        else if(type == LIST_NAMED) {
+            if((strcmp(name, "remove") == 0) && (*in == ':')) {
+                in++;
+                name = findNextName(in);
+                children.removeByName(name);
+            }
+            if(strcmp(name, "create") == 0) {
+                set(":");
+            }
+        }
+    }
+
+
+    // final return
+    if(arg->depth == 0) {/*printOutput(out, arg);*/}
+    
+    // step out
+    //arg->stepOut(name);
+
+    return st;
+}
+
 int FieldNode::get_override(char* out, void* arg_) {
     int st;
     int print_dept;
@@ -141,10 +197,10 @@ const char* FieldNode::findNextName(const char*& str) {
     skipWhiteSpace(str);
 
     while(*str) {
-        if((*str == '{') || (*str == '}') || (*str == '[') || (*str == ']') || (*str == '"')) {
-            skipWhiteSpace(str);
+        if(isWhitespace(str) || strchr("{}\"[]", *str)) {
+            ; // don't care
         }
-        else if((*str == ':') || (*str == ',') || isWhitespace(str)) {
+        else if((*str == ':') || (*str == ',') || (*str == '.')) {
             break;
         }
         else if(n < NamedClass::NAME_SIZE) {
@@ -156,5 +212,5 @@ const char* FieldNode::findNextName(const char*& str) {
 
     skipWhiteSpace(str);
     name_buffer[n] = '\0';
-    return (*str ? name_buffer : nullptr);
+    return ((*str || (n>0)) ? name_buffer : nullptr);
 }
