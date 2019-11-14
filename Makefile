@@ -6,7 +6,7 @@ LIBS = -lgtest_main -lgtest -lpthread
 CC = g++
 LD = $(CC)
 
-SRC_DIR   = fparser
+SRC_DIR   = src
 BUILD_DIR = build
 BIN_DIR   = bin
 TARGET = tests

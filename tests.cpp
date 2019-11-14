@@ -1,9 +1,9 @@
 
-#include "fparser/vector/pvector.hpp"
-#include "fparser/vector/named-vector.hpp"
-#include "fparser/fields.hpp"
-#include "fparser/node-list.hpp"
-#include "fparser/arg.hpp"
+#include "src/vector/pvector.hpp"
+#include "src/vector/named-vector.hpp"
+#include "src/fields.hpp"
+#include "src/node-list.hpp"
+#include "src/arg.hpp"
 #include <gtest/gtest.h>
 
 int st;
