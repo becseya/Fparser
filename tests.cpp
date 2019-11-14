@@ -377,9 +377,12 @@ TEST(Fparser, List) {
     //printf("%s\n", buff);
 }
 
-struct DynamicClassField : public FieldNode {
+struct DynamicClass {
     int myVal;
     char myStr[64];
+};
+
+struct DynamicClassField : public FieldNode, public DynamicClass{
     DynamicClassField(const char* name) : FieldNode(name) {
         myVal = 3;
         strcpy(myStr, "hello");
@@ -396,8 +399,12 @@ TEST(Fparser, NamesList) {
 
     listf2.set("alma:");
     listf2.set(":{szam:-5,str:\"chicken\"}");
-    listf2.set(":");
 
+    ASSERT_EQ(2, myClassList.getSize());
+    ASSERT_EQ(3, myClassList.get(0)->myVal);
+    ASSERT_STREQ("hello", myClassList.get(0)->myStr);
+    ASSERT_EQ(-5, myClassList.get(1)->myVal);
+    ASSERT_STREQ("chicken", myClassList.get(1)->myStr);
 }
 
 
@@ -408,7 +415,7 @@ int main(int argc, char *argv[]) {
     st = RUN_ALL_TESTS();
 
     root.get(buff);
-    printf("%s\n", buff);
+    //printf("%s\n", buff);
 
     return st;
 }
