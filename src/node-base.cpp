@@ -68,6 +68,8 @@ int NodeBase::parse(const char* in, char* out, ParseArg* arg_) {
     ParseArg arg_def;
     ParseArg* arg = arg_ ? (ParseArg*)arg_ : &arg_def;
 
+    skipWhiteSpace(in);
+
     if(*in == '\0' || (strcmp(in, "get") == 0)) {
         return get(out, arg);
     }
