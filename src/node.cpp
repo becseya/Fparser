@@ -171,14 +171,6 @@ void FieldNode::skipData(const char*& str) {
     skipWhiteSpace(str);
 }
 
-bool FieldNode::isWhitespace(const char* c){
-    return ((*c == ' ') || (*c == '\t') || (*c == '\n') || (*c == '\r'));
-}
-
-void FieldNode::skipWhiteSpace(const char*& c){
-    while(isWhitespace(c)) {c++;}
-}
-
 void FieldNode::printNewLine(char* str, int depth, bool comma) {
     if(comma) {strcat(str, ", ");}
     if(!(depth < 0)) {

@@ -29,8 +29,6 @@ protected:
     virtual int parse_override(const char* in, char* out, ParseArg* arg) override;
     const char* findNextName(const char*& str);
     void skipData(const char*& c);
-    bool isWhitespace(const char* c);
-    void skipWhiteSpace(const char*& c);
     void printNewLine(char* str, int depth, bool comma = false);
 
 private:

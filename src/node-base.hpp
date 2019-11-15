@@ -41,5 +41,6 @@ protected:
     virtual int get_override(char* out, GetArgs* arg);
     virtual int set_override(const char* in, SetArgs* arg);
     virtual int parse_override(const char* in, char* out, ParseArg* arg);
-    bool compNext(const char*& src, const char* cmp);
+    bool isWhitespace(const char* c);
+    void skipWhiteSpace(const char*& c);
 };

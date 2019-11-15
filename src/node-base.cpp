@@ -72,10 +72,14 @@ int NodeBase::parse(const char* in, char* out, ParseArg* arg_) {
         return get(out, arg);
     }
     else if(compx(in, ":")) {
-        return set(in+1, arg);
+        in+=1;
+        skipWhiteSpace(in);
+        return set(in, arg);
     }   
     else if(compx(in, "set:")) {
-        return set(in+4, arg);
+        in+=4;
+        skipWhiteSpace(in);
+        return set(in, arg);
     }
     return parse_override(in, out, arg);
 }
@@ -90,4 +94,12 @@ int NodeBase::set_override(const char* in, SetArgs* arg){
 
 int NodeBase::parse_override(const char* in, char* out, ParseArg* arg){
     return -1;
+}
+
+bool NodeBase::isWhitespace(const char* c){
+    return ((*c == ' ') || (*c == '\t') || (*c == '\n') || (*c == '\r'));
+}
+
+void NodeBase::skipWhiteSpace(const char*& c){
+    while(isWhitespace(c)) {c++;}
 }
