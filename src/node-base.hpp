@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vector/named.hpp"
+#include "arg.hpp"
 
 
 
@@ -32,13 +33,13 @@ public:
     int getFlags();
     bool isExportable();
     bool isVisible();
-    int get(char* out, void* arg = nullptr);
-    int set(const char* in, void* arg = nullptr, bool import = false);
-    int parse(const char* in, char* out, void* arg = nullptr);
+    int get(char* out, GetArgs* arg = nullptr);
+    int set(const char* in, SetArgs* arg = nullptr, bool import = false);
+    int parse(const char* in, char* out, ParseArg* arg = nullptr);
     
 protected:
-    virtual int get_override(char* out, void* arg);
-    virtual int set_override(const char* in, void* arg);
-    virtual int parse_override(const char* in, char* out, void* arg);
+    virtual int get_override(char* out, GetArgs* arg);
+    virtual int set_override(const char* in, SetArgs* arg);
+    virtual int parse_override(const char* in, char* out, ParseArg* arg);
     bool compNext(const char*& src, const char* cmp);
 };

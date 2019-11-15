@@ -1,5 +1,4 @@
 #include "node.hpp"
-#include "arg.hpp"
 
 
 FieldNode::FieldNode(const char* name, int flags) : 
@@ -18,14 +17,11 @@ void FieldNode::add(NodeBase* child) {
     children.add(child);
 }
 
-int FieldNode::parse_override(const char* in, char* out, void* arg_) {
-    int st;
+int FieldNode::parse_override(const char* in, char* out, ParseArg* arg) {
     const char* name;
-    ParseArg arg_def;
-    ParseArg* arg = arg_ ? (ParseArg*)arg_ : &arg_def;
 
     // root
-    if(arg->depth == -1) {
+    if(arg->parse_depth == -1) {
         strcpy(out, "");
         if(*in == '!') {in++; arg->dense=true;}
         else {arg->dense = false;}
@@ -57,29 +53,31 @@ int FieldNode::parse_override(const char* in, char* out, void* arg_) {
                 in++;
                 name = findNextName(in);
                 children.removeByName(name);
+                arg->set_ok = true;
             }
             if(strcmp(name, "create") == 0) {
                 set(":");
+                arg->set_ok = true;
             }
+        }
+        else {
+            arg->errWrite("Children not found", name);
         }
     }
 
 
     // final return
-    if(arg->depth == 0) {/*printOutput(out, arg);*/}
+    if(arg->parse_depth == 0) {printOutput(out, arg);}
     
     // step out
-    //arg->stepOut(name);
+    arg->stepOut(getName());
 
-    return st;
+    return (arg->err ? -1 : 0);
 }
 
-int FieldNode::get_override(char* out, void* arg_) {
+int FieldNode::get_override(char* out, GetArgs* arg) {
     int st;
     int print_dept;
-    GetArgs arg_def;
-    GetArgs* arg = arg_ ? (GetArgs*)arg_ : &arg_def;
-
 
     // open bracket
     arg->depth++;
@@ -123,11 +121,9 @@ int FieldNode::get_override(char* out, void* arg_) {
     return st;
 }
 
-int FieldNode::set_override(const char* in, void* arg_) {
+int FieldNode::set_override(const char* in, SetArgs* arg) {
     int st;
     const char* name;
-    SetArgs arg_def;
-    SetArgs* arg = arg_ ? (SetArgs*)arg_ : &arg_def;
 
     while((name = findNextName(in))) {
         NodeBase* child = children.getByName(name);
@@ -213,4 +209,25 @@ const char* FieldNode::findNextName(const char*& str) {
     skipWhiteSpace(str);
     name_buffer[n] = '\0';
     return ((*str || (n>0)) ? name_buffer : nullptr);
+}
+
+void FieldNode::printOutput(char* out, ParseArg* arg) {
+    if(arg->err) {
+        strcat(out, "{");
+        printNewLine(out, (arg->dense ? -1 : 1));
+        strcat(out, "\"status\": \"error\"");
+        printNewLine(out, (arg->dense ? -1 : 1), true);
+        strcat(out, "\"arg_msg\": \"");
+        strcat(out, arg->arg_msg);
+        strcat(out, "\"");
+        printNewLine(out, (arg->dense ? -1 : 1), true);
+        strcat(out, "\"arg_stack\": \"");
+        strcat(out, arg->arg_stack);
+        strcat(out, "\"");
+        printNewLine(out, (arg->dense ? -1 : 0));
+        strcat(out, "}");
+    }
+    else if(arg->set_ok) {
+        strcat(out, "{\"status\": \"ok\"}");
+    }
 }

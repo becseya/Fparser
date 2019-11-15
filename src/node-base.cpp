@@ -35,24 +35,39 @@ bool NodeBase::isVisible() {
     return !(flags & FLAG_NOT_VISIBLE);
 }
 
-int NodeBase::set(const char* in, void* arg, bool import){
+int NodeBase::set(const char* in, SetArgs* arg_, bool import) {
+    SetArgs arg_def;
+    SetArgs* arg = arg_ ? (SetArgs*)arg_ : &arg_def;
+    if(import) {arg->import = true;}
     int st;
-    
-    if(flags & FLAG_READ_ONLY) {return -1;} // return if read only
+
+    if(flags & FLAG_READ_ONLY) { // return if read only
+        arg->err_read_only = true;
+        return -1;
+    }
 
     st = set_override(in, arg);
     if(st >= 0) {
         if(set_flag && !import) {*set_flag = true;} // set change flag
     }
+    else {
+        arg->err_set = true;
+    }
 
     return st;
 }
 
-int NodeBase::get(char* out, void* arg) {
+int NodeBase::get(char* out, GetArgs* arg_) {
+    GetArgs arg_def;
+    GetArgs* arg = arg_ ? (GetArgs*)arg_ : &arg_def;
+
     return get_override(out, arg);
 }
 
-int NodeBase::parse(const char* in, char* out, void* arg) {
+int NodeBase::parse(const char* in, char* out, ParseArg* arg_) {
+    ParseArg arg_def;
+    ParseArg* arg = arg_ ? (ParseArg*)arg_ : &arg_def;
+
     if(*in == '\0' || (strcmp(in, "get") == 0)) {
         return get(out, arg);
     }
@@ -65,14 +80,14 @@ int NodeBase::parse(const char* in, char* out, void* arg) {
     return parse_override(in, out, arg);
 }
 
-int NodeBase::get_override(char* out, void* arg){
+int NodeBase::get_override(char* out, GetArgs* arg){
     return -1;
 }
 
-int NodeBase::set_override(const char* in, void* arg){
+int NodeBase::set_override(const char* in, SetArgs* arg){
     return -1;
 }
 
-int NodeBase::parse_override(const char* in, char* out, void* arg){
+int NodeBase::parse_override(const char* in, char* out, ParseArg* arg){
     return -1;
 }

@@ -6,19 +6,23 @@
 #include <stdarg.h>
 
 void ParseArg::stepIn() {
-    if(depth == -1) {
+    if(parse_depth == -1) {
+        depth = -1;
         err = false;
+        err_not_found = false;
+        err_set = false;
+        err_read_only = false;
         set_ok = false;
         arg_msg[ERR_MSG_SIZE] = '\0';
         arg_stack[ERR_STACK_SIZE] = '\0';
         strcpy(arg_msg, "");
         strcpy(arg_stack, "");
     }
-    depth++;
+    parse_depth++;
 }
 
 void ParseArg::stepOut(const char* name) {
-    depth--;
+    parse_depth--;
     if(err && name) {stackAdd(name);}
 }
 

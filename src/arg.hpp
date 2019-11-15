@@ -10,6 +10,7 @@ struct SetArgs {
     bool import = false;
     bool err_not_found = false;
     bool err_set = false;
+    bool err_read_only = false;
 };
 
 class ParseArg : public SetArgs, public GetArgs {
@@ -19,7 +20,7 @@ public:
     
     bool err;
     bool set_ok;
-    bool dense;
+    int parse_depth = -1;
     char arg_msg[ERR_MSG_SIZE + 1];
     char arg_stack[ERR_STACK_SIZE + 1];
 

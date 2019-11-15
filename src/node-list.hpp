@@ -5,7 +5,7 @@ public:
     FieldList(const char* name, NamedPVector<NodeBase>& children, int flags = 0);
 
 protected:
-    int set_override(const char* in, void* arg) override;
+    int set_override(const char* in, SetArgs* arg) override;
 };
 
 
@@ -15,5 +15,5 @@ public:
     NamedFieldList(const char* name, NamedPVector<NodeBase>& children, int flags = 0);
 
 protected:
-    int set_override(const char* in, void* arg) override;
+    int set_override(const char* in, SetArgs* arg) override;
 };

@@ -10,10 +10,8 @@ NamedFieldList::NamedFieldList(const char* name, NamedPVector<NodeBase>& childre
 {}
 
 
-int FieldList::set_override(const char* in, void* arg_) {
+int FieldList::set_override(const char* in, SetArgs* arg) {
     int st;
-    SetArgs arg_def;
-    SetArgs* arg = arg_ ? (SetArgs*)arg_ : &arg_def;
 
     // starting bracket
     skipWhiteSpace(in);
@@ -25,7 +23,7 @@ int FieldList::set_override(const char* in, void* arg_) {
 
     while(!((*in == '\0') || (*in == ']'))) {
         NodeBase* child = children.createAndAdd();
-        st = child->set(in, arg_, arg->import);
+        st = child->set(in, arg, arg->import);
         if (st < 0) {
             children.removelast();
         }
@@ -35,12 +33,10 @@ int FieldList::set_override(const char* in, void* arg_) {
     return 0;
 }
 
-int NamedFieldList::set_override(const char* in, void* arg_) {
+int NamedFieldList::set_override(const char* in, SetArgs* arg) {
     int st;
     const char* name;
     NodeBase* child;
-    SetArgs arg_def;
-    SetArgs* arg = arg_ ? (SetArgs*)arg_ : &arg_def;
     
     while((name = findNextName(in))) {
         child = children.getByName(name);
@@ -62,7 +58,7 @@ int NamedFieldList::set_override(const char* in, void* arg_) {
                 child = children.createAndAddNamed(name);
             }
             
-            st = child->set(in, arg_, arg->import);
+            st = child->set(in, arg, arg->import);
             if (st < 0) {
                 children.removelast();
                 arg->err_set = true;
