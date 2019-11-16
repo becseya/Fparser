@@ -69,8 +69,9 @@ int NodeBase::parse(const char* in, char* out, ParseArg* arg_) {
     ParseArg* arg = arg_ ? (ParseArg*)arg_ : &arg_def;
 
     skipWhiteSpace(in);
+    if(*in == '!') {in++;}
 
-    if(*in == '\0' || (strcmp(in, "get") == 0)) {
+    if(*in == '\0' || (strcmp(in, "get") == 0) || (strcmp(in, "get") && isWhitespace(in+4))) {
         return get(out, arg);
     }
     else if(compx(in, ":")) {

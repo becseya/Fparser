@@ -30,6 +30,7 @@ int FieldNode::parse_override(const char* in, char* out, ParseArg* arg) {
     // step in
     arg->stepIn();
 
+    skipWhiteSpace(in);
     name = findNextName(in);
     NodeBase* child = children.getByName(name);
 
@@ -38,7 +39,11 @@ int FieldNode::parse_override(const char* in, char* out, ParseArg* arg) {
         child->parse(in, out, arg);
     }
     else if (name) {
-        if(strcmp(name, "list") == 0) {
+        if(strcmp(name, "export") == 0) {
+            arg->only_exportable = true;
+            get(out, arg);           
+        }
+        else if(strcmp(name, "list") == 0) {
             strcat(out, "{\"children\": [ ");
             for(int i = 0; i < children.getSize(); i++) {
                 if(i > 0) {strcat(out, ", ");}
