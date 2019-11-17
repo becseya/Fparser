@@ -87,8 +87,8 @@ int FieldNode::get_override(char* out, GetArgs* arg) {
     // open bracket
     arg->depth++;
     print_dept = ((arg->dense || (type == LIST)) ? -2 : arg->depth);
-    if(type == OBJECT) {strcpy(out, "{");}
-    else {strcpy(out, "[");}
+    if(type == LIST) {strcpy(out, "[");}
+    else {strcpy(out, "{");}
     printNewLine(out, print_dept+1);
 
     bool at_least_one = false;
@@ -119,8 +119,8 @@ int FieldNode::get_override(char* out, GetArgs* arg) {
 
     // close bracket
     printNewLine(out, print_dept);
-    if(type == OBJECT) {strcat(out, "}");}
-    else {strcat(out, "]");}
+    if(type == LIST) {strcat(out, "]");}
+    else {strcat(out, "}");}
     arg->depth--;
 
     return st;
