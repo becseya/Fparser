@@ -61,8 +61,10 @@ int FieldNode::parse_override(const char* in, char* out, ParseArg* arg) {
                 arg->set_ok = true;
             }
             if(strcmp(name, "create") == 0) {
-                set(":");
-                arg->set_ok = true;
+                child = children.createAndAdd();
+                strcat(out, "{\"status\": \"ok\", \"new_name\": \"");
+                strcat(out, child->getName());
+                strcat(out, "\"}");
             }
         }
         else {
