@@ -11,6 +11,7 @@ struct SetArgs {
     bool err_not_found = false;
     bool err_set = false;
     bool err_read_only = false;
+    bool set_exportable = false;
 };
 
 class ParseArg : public SetArgs, public GetArgs {

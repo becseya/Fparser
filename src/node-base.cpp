@@ -48,7 +48,12 @@ int NodeBase::set(const char* in, SetArgs* arg_, bool import) {
 
     st = set_override(in, arg);
     if(st >= 0) {
-        if(set_flag && !import) {*set_flag = true;} // set change flag
+        if(set_flag && !import) {
+            *set_flag = true;
+        } 
+        if(!(flags & FLAG_NOT_EXPORTABLE)) {
+            arg->set_exportable = true;
+        }
     }
     else {
         arg->err_set = true;

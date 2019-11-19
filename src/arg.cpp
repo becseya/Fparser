@@ -13,6 +13,7 @@ void ParseArg::stepIn() {
         err_set = false;
         err_read_only = false;
         set_ok = false;
+        set_exportable = false;
         arg_msg[ERR_MSG_SIZE] = '\0';
         arg_stack[ERR_STACK_SIZE] = '\0';
         strcpy(arg_msg, "");
