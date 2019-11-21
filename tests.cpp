@@ -439,7 +439,7 @@ struct DynamicClassBField : public FieldNode, public DynamicClassB{
 FieldNode root2;
 NamedPVector<DynamicClassAField> myClassListA("t");
 NamedFieldList listf2A("tA", myClassListA, true);
-NamedPVector<DynamicClassAField> myClassListB("p");
+NamedPVector<DynamicClassBField> myClassListB("p");
 NamedFieldList listf2B("pB", myClassListB, true);
 
 TEST(Fparser, DualDynamicTest) {
@@ -448,15 +448,19 @@ TEST(Fparser, DualDynamicTest) {
 
     SetArgs arg2;
     arg2.import = true;
-    //TODO separe create ans set, separate modify set
 
     root2.set("\"tA\":{\"t-1\":{\"szam\":1},\"t-2\":{\"str\":\"  lo\"}},pB:{\"b-1\":{\"szam\":0},\"b-2\":{\"str\":\"ha\"}}", &arg2);
 
     ASSERT_EQ(2, myClassListA.getSize());
-    //ASSERT_EQ(3, myClassList.get(0)->myVal);
-    //ASSERT_STREQ("hello", myClassList.get(0)->myStr);
-    //ASSERT_EQ(-5, myClassList.get(1)->myVal);
-    //ASSERT_STREQ("chicken", myClassList.get(1)->myStr);
+    ASSERT_EQ(1, myClassListA.get(0)->myVal);
+    ASSERT_STREQ("hello", myClassListA.get(0)->myStr);
+    ASSERT_EQ(3, myClassListA.get(1)->myVal);
+    ASSERT_STREQ("  lo", myClassListA.get(1)->myStr);
+    // blist
+    ASSERT_EQ(0, myClassListB.get(0)->myVal);
+    ASSERT_STREQ("hi", myClassListB.get(0)->myStr);
+    ASSERT_EQ(4, myClassListB.get(1)->myVal);
+    ASSERT_STREQ("ha", myClassListB.get(1)->myStr);
 }
 
 
