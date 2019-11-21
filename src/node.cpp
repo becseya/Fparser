@@ -1,5 +1,5 @@
 #include "node.hpp"
-
+#include <stdio.h>
 
 FieldNode::FieldNode(const char* name, int flags) : 
     NodeBase(name, flags, OBJECT),
@@ -61,10 +61,20 @@ int FieldNode::parse_override(const char* in, char* out, ParseArg* arg) {
                 arg->set_ok = true;
             }
             if(strcmp(name, "create") == 0) {
-                child = children.createAndAdd();
-                strcat(out, "{\"status\": \"ok\", \"new_name\": \"");
-                strcat(out, child->getName());
-                strcat(out, "\"}");
+                if(*in == ':') {in++;}  //double :: means auto name, but call set
+                name = findNextName(in);
+                child = children.createAndAddNamed(name);
+
+                int st = child->set(in, arg, arg->import);
+                if (st < 0) {
+                    children.removelast();
+                    arg->err_set = true;
+                }
+                else {
+                    strcat(out, "{\"status\": \"ok\", \"new_name\": \"");
+                    strcat(out, child->getName());
+                    strcat(out, "\"}");
+                }
             }
         }
         else {
@@ -165,7 +175,7 @@ void FieldNode::skipData(const char*& str) {
             if((*str == '"') && (*(str-1) != '\\')) {inide_text = false;}
         }
         else{
-            if((*str == ',') && (depth == 0)) {break;}
+            if(((*str == ',') || (*str == '}'))&& (depth == 0)) {break;}
             if(*str == '"') {inide_text = true;}
             if((*str == '{') || (*str == '[')) {depth++;}
             if((*str == '}') || (*str == ']')) {depth--;}
@@ -186,7 +196,7 @@ void FieldNode::printNewLine(char* str, int depth, bool comma) {
     }
 }
 
-const char* FieldNode::findNextName(const char*& str) {
+const char* FieldNode::findNextName(const char*& str, bool strict) {
     int n = 0;
 
     skipWhiteSpace(str);
@@ -207,7 +217,7 @@ const char* FieldNode::findNextName(const char*& str) {
 
     skipWhiteSpace(str);
     name_buffer[n] = '\0';
-    return ((*str || (n>0)) ? name_buffer : nullptr);
+    return ( (((*str) && !strict) || (n>0)) ? name_buffer : nullptr );
 }
 
 void FieldNode::printOutput(char* out, ParseArg* arg) {

@@ -7,11 +7,6 @@ class NamedPVectorBase : public PVector<NamedClass> {
     char name_buffer[NamedClass::NAME_SIZE+1];
     const char* name_base;
 
-    struct name_and_arg_t {
-        const char* name;
-        void* arg;
-    };
-
 public:
     NamedPVectorBase(const char* name_base = "id");
     virtual ~NamedPVectorBase();

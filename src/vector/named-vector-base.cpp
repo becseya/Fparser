@@ -59,15 +59,19 @@ const char* NamedPVectorBase::generateName() {
 }
 
 NamedClass* NamedPVectorBase::createAndAddNamed(const char* name, void* arg) {
-    NamedClass* ptr = new_named_(name, arg); 
+    NamedClass* ptr;
+
+    if(name && *name) {
+        ptr = new_named_(name, arg); 
+    }
+    else {
+        ptr = new_named_(generateName(), arg);
+    }
+    
     if(ptr) {add(ptr);}
     return ptr;
 }
 
-void* NamedPVectorBase::new_(void* arg_) {
-    name_and_arg_t name_and_arg;
-    name_and_arg.name = generateName();
-    name_and_arg.arg = arg_;
-
-    return new_named_(name_and_arg.name, name_and_arg.arg);
+void* NamedPVectorBase::new_(void* arg) {
+    return new_named_(generateName(), arg);
 }

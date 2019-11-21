@@ -36,36 +36,21 @@ int FieldList::set_override(const char* in, SetArgs* arg) {
 int NamedFieldList::set_override(const char* in, SetArgs* arg) {
     int st;
     const char* name;
-    NodeBase* child;
     
+    // starting bracket
+    skipWhiteSpace(in);
+    if(*in != '{') {return -1;}
+    in++;
+    skipWhiteSpace(in);
+
+    children.clear();
+
     while((name = findNextName(in))) {
-        child = children.getByName(name);
-        if(*in == ':') {in++;}
-        skipWhiteSpace(in);
-
-        if(child) {
-            st = child->set(in, arg, arg->import);
-            if(st < 0) {
-                arg->err_set = true;
-                if(!arg->import) {return -1;} 
-            }
+        NodeBase* child = children.createAndAddNamed(name);
+        st = child->set(in, arg, arg->import);
+        if (st < 0) {
+            children.removelast();
         }
-        else {
-            if(*name == '\0') {
-                child = children.createAndAdd();
-            }
-            else {
-                child = children.createAndAddNamed(name);
-            }
-            
-            st = child->set(in, arg, arg->import);
-            if (st < 0) {
-                children.removelast();
-                arg->err_set = true;
-                if(!arg->import) {return -1;} 
-            }
-        }
-
         skipData(in);
     }
 

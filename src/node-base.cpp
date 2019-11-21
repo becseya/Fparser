@@ -45,7 +45,8 @@ int NodeBase::set(const char* in, SetArgs* arg_, bool import) {
         arg->err_read_only = true;
         return -1;
     }
-
+    
+    if(*in == ':') {in++;}
     st = set_override(in, arg);
     if(st >= 0) {
         if(set_flag && !import) {

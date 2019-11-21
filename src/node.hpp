@@ -27,7 +27,7 @@ protected:
     virtual int get_override(char* out, GetArgs* arg) override;
     virtual int set_override(const char* str, SetArgs* arg) override;
     virtual int parse_override(const char* in, char* out, ParseArg* arg) override;
-    const char* findNextName(const char*& str);
+    const char* findNextName(const char*& str, bool strict = true);
     void skipData(const char*& c);
     void printNewLine(char* str, int depth, bool comma = false);
 

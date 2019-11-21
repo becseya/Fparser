@@ -331,7 +331,7 @@ TEST(Fparser, Node) {
     //printf("%s\n", buff);
     ASSERT_STREQ("{\"sub\": {\"a1\": true, \"a2\": -33}, \"a1\": 1000.1, \"a2\": \"new\"}", buff);
 
-    root.set("a5  :  -33    ,   a2:  \"old\"  ,  sub  :   {  dummy1:  \"asd\",,   , a2:-5,dummy2:{a2:0}},a2:0,  a1:    0.1", &arg);
+    root.set("a5  :  -33    ,   a2:  \"old\"  ,  sub  :   {  dummy1:  \"asd\"   ,   a2:-5,dummy2:{a2:0}},a2:0,  a1:    0.1", &arg);
     root.get(buff, &get_arg); 
     //printf("%s\n", buff);
     ASSERT_EQ(-5, int3);
@@ -377,13 +377,13 @@ TEST(Fparser, List) {
     //printf("%s\n", buff);
 }
 
-struct DynamicClass {
+struct DynamicClassA {
     int myVal;
     char myStr[64];
 };
 
-struct DynamicClassField : public FieldNode, public DynamicClass{
-    DynamicClassField(const char* name) : FieldNode(name) {
+struct DynamicClassAField : public FieldNode, public DynamicClassA{
+    DynamicClassAField(const char* name) : FieldNode(name) {
         myVal = 3;
         strcpy(myStr, "hello");
         children.add(new IntField("szam", myVal));
@@ -391,22 +391,73 @@ struct DynamicClassField : public FieldNode, public DynamicClass{
     }
 };
 
-NamedPVector<DynamicClassField> myClassList("tt");
+NamedPVector<DynamicClassAField> myClassList("tt");
 NamedFieldList listf2("tables", myClassList, true);
 
-TEST(Fparser, NamesList) {
+TEST(Fparser, NamedList) {
     root.add(&listf2);
 
-    listf2.set("alma:");
-    listf2.set(":{szam:-5,str:\"chicken\"}");
+    listf2.parse("create", buff);
+    listf2.parse("create:alma", buff);
+    listf2.parse("create::{szam:-5,str:\"chicken\"}", buff);
+    listf2.parse("create:\"alma2\":{szam:-10,str:\"chicken2\"}", buff);
 
-    ASSERT_EQ(2, myClassList.getSize());
+    ASSERT_EQ(4, myClassList.getSize());
+    // zeroth
     ASSERT_EQ(3, myClassList.get(0)->myVal);
     ASSERT_STREQ("hello", myClassList.get(0)->myStr);
-    ASSERT_EQ(-5, myClassList.get(1)->myVal);
-    ASSERT_STREQ("chicken", myClassList.get(1)->myStr);
+    // first
+    ASSERT_EQ(3, myClassList.get(1)->myVal);
+    ASSERT_STREQ("hello", myClassList.get(1)->myStr);
+    ASSERT_STREQ("alma", myClassList.getName(1));
+    // second
+    ASSERT_EQ(-5, myClassList.get(2)->myVal);
+    ASSERT_STREQ("chicken", myClassList.get(2)->myStr);
+    // third
+    ASSERT_EQ(-10, myClassList.get(3)->myVal);
+    ASSERT_STREQ("chicken2", myClassList.get(3)->myStr);
+    ASSERT_STREQ("alma2", myClassList.getName(3));
+
+    listf2.set("{}");
+    ASSERT_EQ(0, myClassList.getSize());
 }
 
+struct DynamicClassB {
+    int myVal;
+    char myStr[64];
+};
+
+struct DynamicClassBField : public FieldNode, public DynamicClassB{
+    DynamicClassBField(const char* name) : FieldNode(name) {
+        myVal = 4;
+        strcpy(myStr, "hi");
+        children.add(new IntField("szam", myVal));
+        children.add(new CharField("str", myStr));
+    }
+};
+
+FieldNode root2;
+NamedPVector<DynamicClassAField> myClassListA("t");
+NamedFieldList listf2A("tA", myClassListA, true);
+NamedPVector<DynamicClassAField> myClassListB("p");
+NamedFieldList listf2B("pB", myClassListB, true);
+
+TEST(Fparser, DualDynamicTest) {
+    root2.add(&listf2A);
+    root2.add(&listf2B);
+
+    SetArgs arg2;
+    arg2.import = true;
+    //TODO separe create ans set, separate modify set
+
+    root2.set("\"tA\":{\"t-1\":{\"szam\":1},\"t-2\":{\"str\":\"  lo\"}},pB:{\"b-1\":{\"szam\":0},\"b-2\":{\"str\":\"ha\"}}", &arg2);
+
+    ASSERT_EQ(2, myClassListA.getSize());
+    //ASSERT_EQ(3, myClassList.get(0)->myVal);
+    //ASSERT_STREQ("hello", myClassList.get(0)->myStr);
+    //ASSERT_EQ(-5, myClassList.get(1)->myVal);
+    //ASSERT_STREQ("chicken", myClassList.get(1)->myStr);
+}
 
 
 int main(int argc, char *argv[]) {
@@ -415,7 +466,7 @@ int main(int argc, char *argv[]) {
     st = RUN_ALL_TESTS();
 
     for (std::string line; std::getline(std::cin, line);) {
-        root.parse(line.c_str(), buff);
+        root2.parse(line.c_str(), buff);
         printf("%s\n", buff);
     }
 
