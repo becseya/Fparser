@@ -175,7 +175,7 @@ void FieldNode::skipData(const char*& str) {
             if((*str == '"') && (*(str-1) != '\\')) {inide_text = false;}
         }
         else{
-            if(((*str == ',') || (*str == '}'))&& (depth == 0)) {break;}
+            if(((*str == ',') || (*str == '}') || (*str == ']'))&& (depth == 0)) {break;}
             if(*str == '"') {inide_text = true;}
             if((*str == '{') || (*str == '[')) {depth++;}
             if((*str == '}') || (*str == ']')) {depth--;}

@@ -380,6 +380,7 @@ TEST(Fparser, List) {
 struct DynamicClassA {
     int myVal;
     char myStr[64];
+    NamedPVector<DynamicIntField> ints;
 };
 
 struct DynamicClassAField : public FieldNode, public DynamicClassA{
@@ -388,6 +389,8 @@ struct DynamicClassAField : public FieldNode, public DynamicClassA{
         strcpy(myStr, "hello");
         children.add(new IntField("szam", myVal));
         children.add(new CharField("str", myStr));
+        children.add(new FieldList("ints", ints));
+        parse("ints:[-1]", buff);
     }
 };
 
@@ -442,20 +445,26 @@ NamedFieldList listf2A("tA", myClassListA, true);
 NamedPVector<DynamicClassBField> myClassListB("p");
 NamedFieldList listf2B("pB", myClassListB, true);
 
-TEST(Fparser, DualDynamicTest) {
+TEST(Fparser, Import) {
     root2.add(&listf2A);
     root2.add(&listf2B);
 
     SetArgs arg2;
     arg2.import = true;
 
-    root2.set("\"tA\":{\"t-1\":{\"szam\":1},\"t-2\":{\"str\":\"  lo\"}},pB:{\"b-1\":{\"szam\":0},\"b-2\":{\"str\":\"ha\"}}", &arg2);
+    root2.set("\"tA\":{\"t-1\":{\"szam\":1,ints:[1,2]},\"t-2\":{ints:[3,4],\"str\":\"  lo\"}},pB:{\"b-1\":{\"szam\":0},\"b-2\":{\"str\":\"ha\"}}", &arg2);
 
     ASSERT_EQ(2, myClassListA.getSize());
     ASSERT_EQ(1, myClassListA.get(0)->myVal);
     ASSERT_STREQ("hello", myClassListA.get(0)->myStr);
+    ASSERT_EQ(2, myClassListA.get(0)->ints.getSize());
+    ASSERT_EQ(1, (int)*(myClassListA.get(0)->ints.get(0)));
+    ASSERT_EQ(2, (int)*(myClassListA.get(0)->ints.get(1)));
     ASSERT_EQ(3, myClassListA.get(1)->myVal);
     ASSERT_STREQ("  lo", myClassListA.get(1)->myStr);
+    ASSERT_EQ(2, myClassListA.get(1)->ints.getSize());
+    ASSERT_EQ(3, (int)*(myClassListA.get(1)->ints.get(0)));
+    ASSERT_EQ(4, (int)*(myClassListA.get(1)->ints.get(1)));
     // blist
     ASSERT_EQ(0, myClassListB.get(0)->myVal);
     ASSERT_STREQ("hi", myClassListB.get(0)->myStr);
