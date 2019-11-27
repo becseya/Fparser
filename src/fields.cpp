@@ -73,7 +73,14 @@ int FloatField::get_override(char* str, GetArgs* /*Args*/) {
 
 CharField::CharField(const char* name, char* val, int flags, bool* set_flag) :
     NodeBase(name, flags, set_flag),
-    val(val)
+    val(val),
+    val_const(val)
+{}
+
+CharField::CharField(const char* name, const char* val, int flags, bool* set_flag) :
+    NodeBase(name, flags | FLAG_READ_ONLY, set_flag),
+    val(nullptr),
+    val_const(val)
 {}
 
 int CharField::set_override(const char* str, SetArgs* /*Args*/) {
@@ -85,6 +92,6 @@ int CharField::set_override(const char* str, SetArgs* /*Args*/) {
 }
 
 int CharField::get_override(char* str, GetArgs* /*Args*/) {
-    Jstr::escape(str, val);
+    Jstr::escape(str, val_const);
     return 0;
 }
