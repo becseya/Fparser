@@ -86,12 +86,15 @@ CharField::CharField(const char* name, const char* val, int flags, bool* set_fla
 int CharField::set_override(const char* str, SetArgs* /*Args*/) {
     //test format
     if(Jstr::seekLen(str) < 0) {return -1;}
-    
+    if(!val) {return -1;}
+
     Jstr::unescape(val, str);
     return 0;
 }
 
 int CharField::get_override(char* str, GetArgs* /*Args*/) {
+    if(!val_const) {return -1;}
+
     Jstr::escape(str, val_const);
     return 0;
 }
