@@ -41,11 +41,11 @@ public:
 
 class CharField : public NodeBase {
     char* val;
-    const char* val_const;
+    const char*& val_const;
 
 public:
     CharField(const char* name, char* val, int flags = 0, bool* set_flag = nullptr);
-    CharField(const char* name, const char* val, int flags = 0, bool* set_flag = nullptr);
+    CharField(const char* name, const char*& val, int flags = 0, bool* set_flag = nullptr);
     
     int set_override(const char* str, SetArgs* arg) override;
     int get_override(char* str, GetArgs* arg) override;

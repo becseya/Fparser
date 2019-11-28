@@ -268,11 +268,13 @@ char string_[32] = "default";
 int int3 = 0;
 float float1 = -3.5f;
 bool changed = false;
+const char* cchar = "abc";
 
 BoolField bf1("a1", bool1, BoolField::FLAG_READ_ONLY);
 IntField if1("a2", int3, 0, &changed);
 FloatField ff1("a1", float1);
 CharField strf("a2", string_);
+CharField cstrf("a3", cchar);
 
 TEST(Fparser, Fields) {
 
@@ -309,6 +311,12 @@ TEST(Fparser, Fields) {
     ASSERT_STREQ("\"default\"", buff); 
     strf.set("\"new\"");
     ASSERT_STREQ("new", string_); 
+
+    cstrf.get(buff);
+    ASSERT_STREQ("\"abc\"", buff);
+    cchar = "efg";
+    cstrf.get(buff);
+    ASSERT_STREQ("\"efg\"", buff);
 }
 
 ParseArg arg;

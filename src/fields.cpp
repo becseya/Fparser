@@ -71,13 +71,13 @@ int FloatField::get_override(char* str, GetArgs* /*Args*/) {
 
 //-------------------------------------------------------------------------------------------------
 
-CharField::CharField(const char* name, char* val, int flags, bool* set_flag) :
+CharField::CharField(const char* name, char* val_, int flags, bool* set_flag) :
     NodeBase(name, flags, set_flag),
-    val(val),
-    val_const(val)
+    val(val_),
+    val_const(*(const char**)&val)
 {}
 
-CharField::CharField(const char* name, const char* val, int flags, bool* set_flag) :
+CharField::CharField(const char* name, const char*& val, int flags, bool* set_flag) :
     NodeBase(name, flags | FLAG_READ_ONLY, set_flag),
     val(nullptr),
     val_const(val)
