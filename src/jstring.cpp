@@ -9,7 +9,7 @@ namespace Jstr {
     }
 
     int seekLen(const char* src){
-        int n;
+        int n = 0;
 
         if(*src != '"') {return -1;} //missing starter quote mark
         src++;
