@@ -93,7 +93,7 @@ int FieldNode::parse_override(const char* in, char* out, ParseArg* arg) {
 }
 
 int FieldNode::get_override(char* out, GetArgs* arg) {
-    int st;
+    int st = 0;
     int print_dept;
 
     // open bracket
