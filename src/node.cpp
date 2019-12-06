@@ -59,6 +59,7 @@ int FieldNode::parse_override(const char* in, char* out, ParseArg* arg) {
                 name = findNextName(in);
                 children.removeByName(name);
                 arg->set_ok = true;
+                if(isExportable()) {arg->set_exportable = true;}
             }
             if(strcmp(name, "create") == 0) {
                 if(*in == ':') {in++;}  //double :: means auto name, but call set
@@ -75,6 +76,8 @@ int FieldNode::parse_override(const char* in, char* out, ParseArg* arg) {
                     strcat(out, child->getName());
                     strcat(out, "\"}");
                 }
+                
+                if(isExportable()) {arg->set_exportable = true;}
             }
         }
         else {
