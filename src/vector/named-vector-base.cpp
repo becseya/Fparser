@@ -52,7 +52,9 @@ void NamedPVectorBase::removeByName(const char* name){
 
 const char* NamedPVectorBase::generateName() {
     do {
-        sprintf(name_buffer, "%s-%04x", name_base, (rand() & 0xFFFF));
+        unsigned int rnd = (rand() & 0xFFFF);
+        if(rnd < 0x1000) {rnd += 0x1000;}
+        sprintf(name_buffer, "%s-%04x", name_base, rnd);
     } while(getByName(name_buffer));
 
     return name_buffer;
