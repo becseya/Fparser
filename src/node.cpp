@@ -64,6 +64,9 @@ int FieldNode::parse_override(const char* in, char* out, ParseArg* arg) {
             if(strcmp(name, "create") == 0) {
                 if(*in == ':') {in++;}  //double :: means auto name, but call set
                 name = findNextName(in);
+                if(children.getByName(name)) { //make sure name is uniqe
+                    name = nullptr;
+                }
                 child = children.createAndAddNamed(name);
 
                 int st = child->set(in, arg, arg->import);
