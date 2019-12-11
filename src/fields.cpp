@@ -98,3 +98,7 @@ int CharField::get_override(char* str, GetArgs* /*Args*/) {
     Jstr::escape(str, val_const);
     return 0;
 }
+
+const char* CharField::getString() {
+    return val_const;
+}

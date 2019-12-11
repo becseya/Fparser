@@ -49,4 +49,5 @@ public:
     
     int set_override(const char* str, SetArgs* arg) override;
     int get_override(char* str, GetArgs* arg) override;
+    const char* getString();
 };
